@@ -8,7 +8,7 @@ import Home from './pages/home';
 
 const { connectors } = getDefaultWallets({
   appName: 'TodoDApp',
-  projectId: 'YOUR_WALLETCONNECT_PROJECT_ID',
+  projectId: 'TODO', // Will do once I start working on Contracts
 });
 
 const config = createConfig({
