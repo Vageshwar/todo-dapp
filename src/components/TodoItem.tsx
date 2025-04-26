@@ -11,14 +11,15 @@ interface TodoItemProps {
   onToggle: (id: number) => void
   onDelete: (id: number) => void
   onEdit: (id: number, newText: string) => void
+  disabled?: boolean
 }
 
-const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete, onEdit }) => {
+const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete, onEdit, disabled = false }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(todo.text)
 
   const handleEdit = () => {
-    if (editText.trim()) {
+    if (editText.trim() && !disabled) {
       onEdit(todo.id, editText)
       setIsEditing(false)
     }
@@ -29,8 +30,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete, onEdit })
       <input
         type="checkbox"
         checked={todo.completed}
-        onChange={() => onToggle(todo.id)}
-        className="h-5 w-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500 transition-all"
+        onChange={() => !disabled && onToggle(todo.id)}
+        className="h-5 w-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={disabled}
       />
       
       {isEditing ? (
@@ -41,6 +43,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete, onEdit })
           onKeyPress={(e) => e.key === 'Enter' && handleEdit()}
           className="flex-1 p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           autoFocus
+          disabled={disabled}
         />
       ) : (
         <span className={`flex-1 ${todo.completed ? 'line-through text-gray-400' : 'text-gray-700'}`}>
@@ -52,21 +55,24 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete, onEdit })
         {isEditing ? (
           <button
             onClick={handleEdit}
-            className="text-green-500 hover:text-green-600 focus:outline-none"
+            className="text-green-500 hover:text-green-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={disabled}
           >
             Save
           </button>
         ) : (
           <button
-            onClick={() => setIsEditing(true)}
-            className="text-blue-500 hover:text-blue-600 focus:outline-none"
+            onClick={() => !disabled && setIsEditing(true)}
+            className="text-blue-500 hover:text-blue-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={disabled}
           >
             Edit
           </button>
         )}
         <button
-          onClick={() => onDelete(todo.id)}
-          className="text-red-500 hover:text-red-600 focus:outline-none"
+          onClick={() => !disabled && onDelete(todo.id)}
+          className="text-red-500 hover:text-red-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={disabled}
         >
           Delete
         </button>

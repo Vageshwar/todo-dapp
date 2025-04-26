@@ -2,19 +2,35 @@ import './App.css'
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Home from './pages/home';
 
+// Hardhat local network configuration
+const localNetwork = {
+  id: 31337,
+  name: 'Hardhat',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: { http: ['http://127.0.0.1:8545'] },
+  },
+  testnet: true,
+} as const;
+
+const projectId = import.meta.env.VITE_PROJECT_ID
+
 const { connectors } = getDefaultWallets({
   appName: 'TodoDApp',
-  projectId: 'TODO', // Will do once I start working on Contracts
+  projectId,
 });
 
 const config = createConfig({
-  chains: [sepolia],
+  chains: [localNetwork],
   transports: {
-    [sepolia.id]: http(),
+    [localNetwork.id]: http(),
   },
   connectors,
 });
@@ -22,7 +38,6 @@ const config = createConfig({
 const queryClient = new QueryClient();
 
 function App() {
-
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
